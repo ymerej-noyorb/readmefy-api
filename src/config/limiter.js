@@ -1,8 +1,11 @@
 import rateLimit from 'express-rate-limit';
 
-const limiter = rateLimit({
+const limiterOptions = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
+    max: process.env.RATE_LIMIT || 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req, res) => process.env.NODE_ENV !== 'production',
 });
 
-export default limiter;
+export default limiterOptions;

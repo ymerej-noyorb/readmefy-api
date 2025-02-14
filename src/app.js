@@ -3,36 +3,33 @@ import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
 
 import routes from './routes/index.js';
-import setupSwagger from './config/swagger.js';
 import errorHandler from './middlewares/error.middleware.js';
-import limiter from './config/limiter.js';
+import swaggerRoute from './config/swagger.js';
+import limiterOptions from './config/limiter.js';
 import corsOptions from './config/cors.js';
+import helmetOptions from './config/helmet.js';
+import compressionOptions from './config/compression.js';
 
-dotenv.config();
 const app = express();
 
-app.use(helmet());
+if (process.env.NODE_ENV !== 'production') {
+    dotenv.config();
+    app.use(morgan('dev'));
+    app.use('/api', swaggerRoute);
+} else {
+    app.use(limiterOptions);
+}
+
+app.use(helmet(helmetOptions));
 app.use(cors(corsOptions));
-app.use(compression());
+app.use(compression(compressionOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const loadMorgan = async () => {
-    if (process.env.NODE_ENV === 'development') {
-        const { default: morgan } = await import('morgan');
-        app.use(morgan('dev'));
-    }
-};
-await loadMorgan();
-
-if (process.env.NODE_ENV === 'production') {
-    app.use(limiter);
-}
-
 app.use('/api', routes);
-setupSwagger(app);
 app.use(errorHandler);
 
 export default app;
