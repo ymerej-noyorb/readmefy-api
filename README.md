@@ -10,11 +10,10 @@ This is a basic Express.js project setup with a structured folder architecture, 
 /express-project
 │── /node_modules        # Installed dependencies
 │── /src                 # Main source code
+│   ├── /config          # Configuration files
 │   ├── /controllers     # Handles HTTP request logic
-│   ├── /routes          # Route definitions
 │   ├── /middlewares     # Custom middlewares
-│   ├── /config          # Configuration files (e.g., database)
-│   ├── /views           # Template engine views (if used)
+│   ├── /routes          # Route definitions
 │   ├── /utils           # Utility functions
 │   ├── app.js           # Express app configuration
 │   └── server.js        # Server entry point
