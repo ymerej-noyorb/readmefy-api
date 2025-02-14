@@ -51,7 +51,10 @@ npm install
 Create a `.env` file in the root directory:
 
 ```
+NODE_ENV=development
 PORT=3000
+CORS_ORIGIN=http://localhost:${PORT}
+RATE_LIMIT=100
 ```
 
 ### 5️⃣ Start the Server
