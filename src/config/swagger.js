@@ -26,6 +26,9 @@ const options = {
 
 const swaggerSpec = swaggerJSDoc(options);
 const swaggerRoute = express.Router();
-swaggerRoute.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+swaggerRoute.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: 'API documentation | Readmefy',
+  customfavIcon: 'https://i.imgur.com/75lDT1Z.png'
+}));
 
 export default swaggerRoute;
