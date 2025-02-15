@@ -1,3 +1,5 @@
+import compression from "compression";
+
 const compressionOptions = {
     level: 6,
         threshold: 1024,
