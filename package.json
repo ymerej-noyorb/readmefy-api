@@ -13,7 +13,7 @@
     "url": "git+https://github.com/ymerej-noyorb/readmefy-api.git"
   },
   "keywords": [
-    "api",
+    "nodemon",
     "express"
   ],
   "author": "ymerej-noyorb",
