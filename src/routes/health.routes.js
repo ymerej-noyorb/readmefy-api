@@ -9,6 +9,8 @@ const router = express.Router();
  *   get:
  *     summary: Check server status
  *     description: Returns a message indicating whether the server is working correctly.
+ *     tags:
+ *       - Default
  *     responses:
  *       200:
  *         description: The server is functioning normally.
