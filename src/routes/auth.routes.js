@@ -3,10 +3,7 @@ import {
 	getGithub,
 	getGitHubCallback,
 } from "../controllers/authentication/provider/gihub.controller.js";
-import {
-	getAuthStatus,
-	getUser,
-} from "../controllers/authentication/auth.controller.js";
+import { getAuthStatus } from "../controllers/authentication/auth.controller.js";
 
 const router = express.Router();
 
@@ -63,66 +60,6 @@ const router = express.Router();
  *                   example: "An unexpected error occurred"
  */
 router.get("/status", getAuthStatus);
-
-/**
- * @swagger
- * /auth/user:
- *   get:
- *     summary: Retrieves the authenticated user data
- *     description: |
- *       This endpoint retrieves the currently authenticated user's information by verifying the JWT token from the request cookie.
- *       If the token is valid, user data is returned. If not, an error message is sent.
- *     tags:
- *       - Authentication
- *     responses:
- *       200:
- *         description: Successfully retrieved user data. The token is valid, and the user's information is returned.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 user:
- *                   type: object
- *                   description: The decoded user information from the JWT token.
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "12345"
- *                     username:
- *                       type: string
- *                       example: "johndoe"
- *       401:
- *         description: Unauthorized, the token is either missing or invalid.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: "No token found"
- *       500:
- *         description: Internal Server Error, something went wrong during token verification.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: "Invalid token"
- */
-router.get("/user", getUser);
 
 /**
  * @swagger

@@ -1,9 +1,13 @@
 import {
 	setCookieAuthStatus,
-	setCookieAuthToken,
+	setCookieAccessToken,
+	setCookieRefreshToken,
 } from "../../../utils/cookies.js";
 import { app, isProduction } from "../../../utils/environment.js";
-import { generateAccessToken } from "../../../utils/token.js";
+import {
+	generateAccessToken,
+	generateRefreshToken,
+} from "../../../utils/token.js";
 
 export const getGithub = (req, res) => {
 	const redirectURI = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=user:email`;
@@ -67,7 +71,7 @@ export const getGitHubCallback = async (req, res) => {
 		});
 
 		const user = await userResponse.json();
-		if (!user.id || !user.login) {
+		if (!user.id) {
 			setCookieAuthStatus(
 				res,
 				false,
@@ -83,7 +87,9 @@ export const getGitHubCallback = async (req, res) => {
 		}
 
 		const token = generateAccessToken(user);
-		setCookieAuthToken(res, token);
+		const refreshToken = generateRefreshToken(user);
+		setCookieAccessToken(res, token);
+		setCookieRefreshToken(res, refreshToken);
 		setCookieAuthStatus(
 			res,
 			true,
