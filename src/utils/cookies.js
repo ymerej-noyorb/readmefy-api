@@ -9,7 +9,7 @@ export const setCookieAuthStatus = (
 	options = {
 		httpOnly: true,
 		secure: isProduction,
-		maxAge: 5 * 60 * 1000,
+		maxAge: 5 * 60 * 1000, // 5 minutes
 	}
 ) => {
 	return res.cookie(
@@ -31,7 +31,7 @@ export const setCookieAccessToken = (
 		httpOnly: true,
 		secure: isProduction,
 		sameSite: "Strict",
-		maxAge: 25 * 60 * 60 * 1000,
+		maxAge: 25 * 60 * 60 * 1000, // 25 heures
 	}
 ) => {
 	return res.cookie("ACCESS_TOKEN", token, options);
@@ -44,7 +44,7 @@ export const setCookieRefreshToken = (
 		httpOnly: true,
 		secure: isProduction,
 		sameSite: "Strict",
-		maxAge: 8 * 24 * 60 * 60 * 1000,
+		maxAge: 8 * 24 * 60 * 60 * 1000, // 8 jours
 	}
 ) => {
 	return res.cookie("REFRESH_TOKEN", refreshToken, options);
