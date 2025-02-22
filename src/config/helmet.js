@@ -1,6 +1,7 @@
+import { isProduction } from "../utils/environment.js";
+
 const helmetOptions = {
-	contentSecurityPolicy:
-		process.env.NODE_ENV === "production" ? undefined : false,
+	contentSecurityPolicy: isProduction ? true : false,
 };
 
 export default helmetOptions;

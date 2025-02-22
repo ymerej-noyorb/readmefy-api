@@ -4,6 +4,7 @@ import cors from "cors";
 import compression from "compression";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 
 import routes from "./routes/index.js";
 import errorHandler from "./middlewares/error.middleware.js";
@@ -12,10 +13,11 @@ import limiterOptions from "./config/limiter.js";
 import corsOptions from "./config/cors.js";
 import helmetOptions from "./config/helmet.js";
 import compressionOptions from "./config/compression.js";
+import { isProduction } from "./utils/environment.js";
 
 const app = express();
 
-if (process.env.NODE_ENV !== "production") {
+if (!isProduction) {
 	dotenv.config();
 	app.use(morgan("dev"));
 	app.use("/api", swaggerRoute);
@@ -23,6 +25,7 @@ if (process.env.NODE_ENV !== "production") {
 	app.use(limiterOptions);
 }
 
+app.use(cookieParser());
 app.use(helmet(helmetOptions));
 app.use(cors(corsOptions));
 app.use(compression(compressionOptions));

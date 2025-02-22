@@ -1,5 +1,8 @@
+import { app, isProduction } from "../utils/environment.js";
+
 const corsOptions = {
-	origin: process.env.NODE_ENV === "production" ? process.env.CORS_ORIGIN : "*",
+	origin: isProduction ? app.url.production : app.url.development,
+	credentials: true,
 };
 
 export default corsOptions;
