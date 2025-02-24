@@ -2,64 +2,16 @@ import express from "express";
 import {
 	getGithub,
 	getGitHubCallback,
-} from "../controllers/authentication/provider/gihub.controller.js";
-import { getAuthStatus } from "../controllers/authentication/auth.controller.js";
+} from "../controllers/gihub.controller.js";
+import { getUser, removeUser } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
-/**
- * @swagger
- * /auth/status:
- *   get:
- *     summary: Checks and returns the authentication status
- *     description: |
- *       This endpoint checks the authentication status of the current user. If the authentication status is found in the cookies, it returns the status.
- *       If no status is found, a `204 No Content` response is returned. The status is then cleared after it is retrieved.
- *     tags:
- *       - Authentication
- *     responses:
- *       200:
- *         description: Successfully retrieved the authentication status.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 provider:
- *                   type: string
- *                   example: "GitHub"
- *                 type:
- *                   type: string
- *                   example: "auth_success"
- *                 message:
- *                   type: string
- *                   example: "Successfully connected to GitHub"
- *       204:
- *         description: No authentication status found, no content to return.
- *       500:
- *         description: Internal Server Error, something went wrong while retrieving the authentication status.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 provider:
- *                   type: string
- *                   example: "GitHub"
- *                 type:
- *                   type: string
- *                   example: "unknown_error"
- *                 message:
- *                   type: string
- *                   example: "An unexpected error occurred"
- */
-router.get("/status", getAuthStatus);
+//TODO: add swagger comments
+router.get("/me", getUser);
+
+//TODO: add swagger comments
+router.get("/logout", removeUser);
 
 /**
  * @swagger
@@ -95,6 +47,7 @@ router.get("/status", getAuthStatus);
  */
 router.get("/github", getGithub);
 
+//TODO: update swagger comments
 /**
  * @swagger
  * /auth/github/callback:

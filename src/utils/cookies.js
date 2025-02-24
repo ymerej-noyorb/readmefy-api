@@ -1,29 +1,5 @@
 import { isProduction } from "./environment.js";
 
-export const setCookieAuthStatus = (
-	res,
-	status,
-	provider,
-	type,
-	message,
-	options = {
-		httpOnly: true,
-		secure: isProduction,
-		maxAge: 5 * 60 * 1000, // 5 minutes
-	}
-) => {
-	return res.cookie(
-		"AUTH_STATUS",
-		JSON.stringify({
-			success: status,
-			provider: provider,
-			type: type,
-			message: message,
-		}),
-		options
-	);
-};
-
 export const setCookieAccessToken = (
 	res,
 	token,
@@ -34,42 +10,13 @@ export const setCookieAccessToken = (
 		maxAge: 25 * 60 * 60 * 1000, // 25 heures
 	}
 ) => {
-	return res.cookie("ACCESS_TOKEN", token, options);
-};
-
-export const setCookieRefreshToken = (
-	res,
-	refreshToken,
-	options = {
-		httpOnly: true,
-		secure: isProduction,
-		sameSite: "Strict",
-		maxAge: 8 * 24 * 60 * 60 * 1000, // 8 jours
-	}
-) => {
-	return res.cookie("REFRESH_TOKEN", refreshToken, options);
-};
-
-export const getCookieAuthStatus = (req) => {
-	return req.cookies.AUTH_STATUS;
+	return res.cookie("GITHUB_TOKEN", token, options);
 };
 
 export const getCookieAccessToken = (req) => {
-	return req.cookies.ACCESS_TOKEN;
-};
-
-export const getCookieRefreshToken = (req) => {
-	return req.cookies.REFRESH_TOKEN;
-};
-
-export const clearCookieAuthStatus = (res) => {
-	return res.clearCookie("AUTH_STATUS", { sameSite: "Strict" });
+	return req.cookies.GITHUB_TOKEN;
 };
 
 export const clearCookieAccessToken = (res) => {
-	return res.clearCookie("ACCESS_TOKEN", { sameSite: "Strict" });
-};
-
-export const clearCookieRefreshToken = (res) => {
-	return res.clearCookie("REFRESH_TOKEN", { sameSite: "Strict" });
+	return res.clearCookie("GITHUB_TOKEN", { sameSite: "Strict" });
 };

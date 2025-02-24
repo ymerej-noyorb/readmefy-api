@@ -1,36 +1,39 @@
 import {
 	clearCookieAccessToken,
-	clearCookieAuthStatus,
-	clearCookieRefreshToken,
+	getCookieAccessToken,
 } from "../utils/cookies.js";
 
 export const getUser = async (req, res) => {
-	if (!req.user) {
-		return res
-			.status(401)
-			.json({ success: false, message: "No user data found" });
+	const accessToken = getCookieAccessToken(req);
+
+	if (!accessToken) {
+		return res.status(401).json({ authenticated: false, user: null });
 	}
 
-	return res.status(200).json({
-		success: true,
-		message: "User data retrieved successfully",
-		user: req.user,
-	});
+	try {
+		const userResponse = await fetch("https://api.github.com/user", {
+			headers: { Authorization: `Bearer ${accessToken}` },
+		});
+
+		const user = await userResponse.json();
+
+		if (!user.id) {
+			return res.status(401).json({ authenticated: false, user: null });
+		}
+
+		return res.json({ authenticated: true, user });
+	} catch (error) {
+		return res.status(500).json({ authenticated: false, user: null });
+	}
 };
 
-export const getUserLogout = async (req, res) => {
-	if (!req.user) {
-		return res
-			.status(401)
-			.json({ success: false, message: "No user data found" });
+export const removeUser = (req, res) => {
+	const accessToken = getCookieAccessToken(req);
+
+	if (!accessToken) {
+		return res.status(401).json({ authenticated: false, user: null });
 	}
 
-	clearCookieAuthStatus(res);
 	clearCookieAccessToken(res);
-	clearCookieRefreshToken(res);
-
-	return res.status(200).json({
-		success: true,
-		message: "User logged out successfully",
-	});
+	return res.json({ authenticated: false, user: null });
 };
