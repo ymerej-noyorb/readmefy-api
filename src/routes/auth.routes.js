@@ -3,15 +3,8 @@ import {
 	getGithub,
 	getGitHubCallback,
 } from "../controllers/gihub.controller.js";
-import { getUser, removeUser } from "../controllers/user.controller.js";
 
 const router = express.Router();
-
-//TODO: add swagger comments
-router.get("/me", getUser);
-
-//TODO: add swagger comments
-router.get("/logout", removeUser);
 
 /**
  * @swagger
@@ -47,7 +40,6 @@ router.get("/logout", removeUser);
  */
 router.get("/github", getGithub);
 
-//TODO: update swagger comments
 /**
  * @swagger
  * /auth/github/callback:
@@ -66,13 +58,9 @@ router.get("/github", getGithub);
  *         name: error
  *         required: false
  *         description: The error code, if an error occurred during the GitHub OAuth process.
- *       - in: query
- *         name: error_description
- *         required: false
- *         description: A detailed description of the error that occurred.
  *     responses:
  *       200:
- *         description: Successfully authenticated with GitHub. A session is created, and the user is redirected to the login page.
+ *         description: Successfully authenticated with GitHub. A session is created, and the user is redirected to the dashboard.
  *         content:
  *           application/json:
  *             schema:
@@ -83,7 +71,7 @@ router.get("/github", getGithub);
  *                   example: "success"
  *                 message:
  *                   type: string
- *                   example: "Successfully connected to GitHub"
+ *                   example: "GitHub authentication successful"
  *       400:
  *         description: Bad Request, typically caused by an error in the authentication process or invalid user data.
  *         content:
@@ -97,6 +85,19 @@ router.get("/github", getGithub);
  *                 message:
  *                   type: string
  *                   example: "Failed to retrieve access token"
+ *       401:
+ *         description: Unauthorized. Occurs when the token is invalid or the user is not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid token or user not found"
  *       500:
  *         description: Internal Server Error, an unexpected error occurred during the authentication process.
  *         content:

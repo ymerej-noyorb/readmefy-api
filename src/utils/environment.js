@@ -1,4 +1,4 @@
-export const isProduction = process.env.NODE_ENV === "production";
+export const isProduction = process.env.READMEFY_ENV === "production";
 export const app = {
 	url: {
 		development: "http://localhost:5173",

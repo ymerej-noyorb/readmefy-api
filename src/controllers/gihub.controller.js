@@ -1,5 +1,6 @@
 import { setCookieAccessToken } from "../utils/cookies.js";
 import { app, isProduction } from "../utils/environment.js";
+import { setJwtToken } from "../utils/jwt.js";
 
 export const getGithub = (req, res) => {
 	const redirectURI = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=user:email`;
@@ -13,7 +14,7 @@ export const getGitHubCallback = async (req, res) => {
 		return res.redirect(
 			`${
 				isProduction ? app.url.production : app.url.development
-			}/login?error=github_auth_failed`
+			}/login?provider=github&error=github_auth_failed&message=GitHub authentication failed`
 		);
 	}
 
@@ -39,13 +40,13 @@ export const getGitHubCallback = async (req, res) => {
 			return res.redirect(
 				`${
 					isProduction ? app.url.production : app.url.development
-				}/login?error=invalid_token`
+				}/login?provider=github&error=invalid_token&message=Invalid GitHub access token`
 			);
 		}
 
-		const accessToken = tokenData.access_token;
+		const githubToken = tokenData.access_token;
 		const userResponse = await fetch("https://api.github.com/user", {
-			headers: { Authorization: `Bearer ${accessToken}` },
+			headers: { Authorization: `Bearer ${githubToken}` },
 		});
 
 		const user = await userResponse.json();
@@ -53,23 +54,26 @@ export const getGitHubCallback = async (req, res) => {
 			return res.redirect(
 				`${
 					isProduction ? app.url.production : app.url.development
-				}/login?error=user_not_found`
+				}/login?provider=github&error=user_not_found&message=GitHub user not found`
 			);
 		}
 
-		//TODO: create an endpoint to refresh token when is expired
-		setCookieAccessToken(res, accessToken);
+		const readmefyToken = setJwtToken({
+			id: user.id,
+			login: user.login,
+			email: user.email,
+		});
+		setCookieAccessToken(res, readmefyToken);
+		//TODO: Create a middleware for every routes to refresh token if during a request of a user, his token is expired
 
 		return res.redirect(
-			`${
-				isProduction ? app.url.production : app.url.development
-			}/dashboard?success=github_auth_success`
+			`${isProduction ? app.url.production : app.url.development}/dashboard`
 		);
 	} catch (error) {
 		return res.redirect(
 			`${
 				isProduction ? app.url.production : app.url.development
-			}/login?error=server_error`
+			}/login?provider=github&error=server_error&message=An error occurred during GitHub authentication`
 		);
 	}
 };
