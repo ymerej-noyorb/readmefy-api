@@ -49,6 +49,7 @@ export const getGitHubCallback = async (req, res) => {
 			headers: { Authorization: `Bearer ${githubToken}` },
 		});
 
+		//TODO: Use user data to store it in database
 		const user = await userResponse.json();
 		if (!user.id) {
 			return res.redirect(
@@ -64,7 +65,6 @@ export const getGitHubCallback = async (req, res) => {
 			email: user.email,
 		});
 		setCookieAccessToken(res, readmefyToken);
-		//TODO: Create a middleware for every routes to refresh token if during a request of a user, his token is expired
 
 		return res.redirect(
 			`${isProduction ? app.url.production : app.url.development}/dashboard`

@@ -1,0 +1,49 @@
+services:
+  readmefy-app:
+    build: ../readmefy-app
+    container_name: readmefy-app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../readmefy-app:/readmefy-app
+      - /readmefy-app/node_modules
+    networks:
+      - readmefy-network
+
+  readmefy-api:
+    build: .
+    container_name: readmefy-api
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/readmefy-api
+      - /readmefy-api/node_modules
+    depends_on:
+      - readmefy-db
+    environment:
+      - READMEFY_ENV=${READMEFY_ENV}
+      - READMEFY_TOKEN=${READMEFY_TOKEN}
+      - READMEFY_SECRET=${READMEFY_SECRET}
+      - READMEFY_USER=${READMEFY_USER}
+      - READMEFY_PASSWORD=${READMEFY_PASSWORD}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+    networks:
+      - readmefy-network
+
+  readmefy-db:
+    image: mysql:8.4
+    container_name: readmefy-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${READMEFY_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${READMEFY_DATABASE}
+      MYSQL_USER: ${READMEFY_USER}
+      MYSQL_PASSWORD: ${READMEFY_PASSWORD}
+    ports:
+      - "3306:3306"
+    networks:
+      - readmefy-network
+
+networks:
+  readmefy-network:
+    driver: bridge

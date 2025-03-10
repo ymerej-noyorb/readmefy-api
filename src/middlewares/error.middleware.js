@@ -1,6 +1,6 @@
 import logger from "../config/winston.js";
 
-const errorHandler = (err, req, res, next) => {
+const handleError = (err, req, res, next) => {
 	console.error(err.stack);
 	logger.error(err.message);
 	res.status(err.status || 500).json({
@@ -9,4 +9,4 @@ const errorHandler = (err, req, res, next) => {
 	});
 };
 
-export default errorHandler;
+export default handleError;

@@ -7,7 +7,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
 import routes from "./routes/index.js";
-import errorHandler from "./middlewares/error.middleware.js";
+import handleError from "./middlewares/error.middleware.js";
 import swaggerRoute from "./config/swagger.js";
 import limiterOptions from "./config/limiter.js";
 import corsOptions from "./config/cors.js";
@@ -33,6 +33,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", routes);
-app.use(errorHandler);
+app.use(handleError);
 
 export default app;
