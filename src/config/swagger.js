@@ -2,6 +2,7 @@ import express from "express";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { createRequire } from "module";
+import { app } from "../utils/environment.js";
 
 const require = createRequire(import.meta.url);
 const packageJson = require("../../package.json");
@@ -16,7 +17,7 @@ const options = {
 		},
 		servers: [
 			{
-				url: "http://localhost:3000/api",
+				url: app.url,
 				description: "Local server",
 			},
 		],

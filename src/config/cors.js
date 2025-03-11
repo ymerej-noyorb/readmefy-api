@@ -1,7 +1,7 @@
-import { app, isProduction } from "../utils/environment.js";
+import { app } from "../utils/environment.js";
 
 const corsOptions = {
-	origin: isProduction ? app.url.production : app.url.development,
+	origin: app.url,
 	credentials: true,
 };
 

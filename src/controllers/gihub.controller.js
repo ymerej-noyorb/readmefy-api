@@ -1,5 +1,5 @@
 import { setCookieAccessToken } from "../utils/cookies.js";
-import { app, isProduction } from "../utils/environment.js";
+import { app } from "../utils/environment.js";
 import { setJwtToken } from "../utils/jwt.js";
 
 export const getGithub = (req, res) => {
@@ -12,9 +12,7 @@ export const getGitHubCallback = async (req, res) => {
 
 	if (error) {
 		return res.redirect(
-			`${
-				isProduction ? app.url.production : app.url.development
-			}/login?provider=github&error=github_auth_failed&message=GitHub authentication failed`
+			`${app.url}/login?provider=github&error=github_auth_failed&message=GitHub authentication failed`
 		);
 	}
 
@@ -38,9 +36,7 @@ export const getGitHubCallback = async (req, res) => {
 		const tokenData = await tokenResponse.json();
 		if (tokenData.error) {
 			return res.redirect(
-				`${
-					isProduction ? app.url.production : app.url.development
-				}/login?provider=github&error=invalid_token&message=Invalid GitHub access token`
+				`${app.url}/login?provider=github&error=invalid_token&message=Invalid GitHub access token`
 			);
 		}
 
@@ -53,9 +49,7 @@ export const getGitHubCallback = async (req, res) => {
 		const user = await userResponse.json();
 		if (!user.id) {
 			return res.redirect(
-				`${
-					isProduction ? app.url.production : app.url.development
-				}/login?provider=github&error=user_not_found&message=GitHub user not found`
+				`${app.url}/login?provider=github&error=user_not_found&message=GitHub user not found`
 			);
 		}
 
@@ -66,14 +60,10 @@ export const getGitHubCallback = async (req, res) => {
 		});
 		setCookieAccessToken(res, readmefyToken);
 
-		return res.redirect(
-			`${isProduction ? app.url.production : app.url.development}/dashboard`
-		);
+		return res.redirect(`${app.url}/dashboard`);
 	} catch (error) {
 		return res.redirect(
-			`${
-				isProduction ? app.url.production : app.url.development
-			}/login?provider=github&error=server_error&message=An error occurred during GitHub authentication`
+			`${app.url}/login?provider=github&error=server_error&message=An error occurred during GitHub authentication`
 		);
 	}
 };
