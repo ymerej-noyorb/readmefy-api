@@ -1,9 +1,10 @@
 import os from "os";
+import { isProduction } from "../utils/environment.js";
 
 export const getHealth = async (req, res) => {
 	const token =
 		req.headers.authorization && req.headers.authorization.split(" ")[1];
-	if (!token || token !== process.env.READMEFY_TOKEN) {
+	if (isProduction && (!token || token !== process.env.READMEFY_TOKEN)) {
 		return res.status(403).json({
 			success: false,
 			message: "Invalid or missing Bearer token",
