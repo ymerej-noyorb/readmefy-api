@@ -26,7 +26,7 @@ const options = {
 };
 
 const swaggerSpec = swaggerJSDoc(options);
-const swaggerRoute = express.Router();
+export const swaggerRoute = express.Router();
 swaggerRoute.use(
 	"/docs",
 	swaggerUi.serve,
@@ -35,5 +35,3 @@ swaggerRoute.use(
 		customfavIcon: "https://i.imgur.com/I6S586o.png",
 	})
 );
-
-export default swaggerRoute;

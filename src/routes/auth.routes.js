@@ -1,8 +1,9 @@
 import express from "express";
 import {
-	getGithub,
-	getGitHubCallback,
+	gitHubController,
+	gitHubCallbackController,
 } from "../controllers/gihub.controller.js";
+import { authMiddleware } from "../middlewares/token.middleware.js";
 
 const router = express.Router();
 
@@ -38,7 +39,11 @@ const router = express.Router();
  *                   type: string
  *                   example: "GitHub client ID is missing or invalid"
  */
-router.get("/github", getGithub);
+router.get(
+	"/github",
+	authMiddleware({ blockIfAuthenticated: true }),
+	gitHubController
+);
 
 /**
  * @swagger
@@ -114,6 +119,10 @@ router.get("/github", getGithub);
  *     security:
  *       - OAuth2: [read, write]
  */
-router.get("/github/callback", getGitHubCallback);
+router.get(
+	"/github/callback",
+	authMiddleware({ blockIfAuthenticated: true }),
+	gitHubCallbackController
+);
 
 export default router;

@@ -1,7 +1,5 @@
 import { isProduction } from "../utils/environment.js";
 
-const helmetOptions = {
+export const helmetOptions = {
 	contentSecurityPolicy: isProduction,
 };
-
-export default helmetOptions;

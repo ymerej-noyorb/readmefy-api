@@ -1,18 +1,21 @@
 import os from "os";
-import { isProduction } from "../utils/environment.js";
+import { databaseIsHealthy } from "../config/database.js";
+import { logger } from "../config/winston.js";
 
-export const getHealth = async (req, res) => {
-	const token =
-		req.headers.authorization && req.headers.authorization.split(" ")[1];
-	if (isProduction && (!token || token !== process.env.READMEFY_TOKEN)) {
-		return res.status(403).json({
-			success: false,
-			message: "Invalid or missing Bearer token",
-			data: {},
-		});
-	}
-
+export const healthController = async (req, res) => {
 	try {
+		let databaseStatus = "healthy";
+		let databaseResponseTime = null;
+
+		try {
+			const start = Date.now();
+			await databaseIsHealthy();
+			databaseResponseTime = Date.now() - start;
+		} catch (err) {
+			logger.error("Database unhealthy:", err);
+			databaseStatus = "unhealthy";
+		}
+
 		res.status(200).json({
 			success: true,
 			message: "Server is running and healthy",
@@ -33,10 +36,14 @@ export const getHealth = async (req, res) => {
 						loadAverage: os.loadavg(),
 					},
 				},
+				database: {
+					status: databaseStatus,
+					responseTime: databaseResponseTime,
+				},
 			},
 		});
 	} catch (err) {
-		console.error("Health check error:", err);
+		logger.error("Health check error:", err);
 		res.status(500).json({
 			status: false,
 			message: "Internal server error",

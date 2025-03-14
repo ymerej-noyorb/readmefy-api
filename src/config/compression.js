@@ -1,6 +1,6 @@
 import compression from "compression";
 
-const compressionOptions = {
+export const compressionOptions = {
 	level: 6,
 	threshold: 1024,
 	filter: (req, res) => {
@@ -10,5 +10,3 @@ const compressionOptions = {
 		return compression.filter(req, res);
 	},
 };
-
-export default compressionOptions;

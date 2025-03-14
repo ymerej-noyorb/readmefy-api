@@ -14,7 +14,7 @@ export const setCookieAccessToken = (
 };
 
 export const getCookieAccessToken = (req) => {
-	return req.cookies.READMEFY_TOKEN;
+	return req.cookies?.READMEFY_TOKEN;
 };
 
 export const clearCookieAccessToken = (res) => {
