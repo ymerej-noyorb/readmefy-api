@@ -1,128 +1,14 @@
 import express from "express";
-import {
-	gitHubController,
-	gitHubCallbackController,
-} from "../controllers/gihub.controller.js";
 import { authMiddleware } from "../middlewares/token.middleware.js";
+import {
+	loginController,
+	logoutController,
+} from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
-/**
- * @swagger
- * /auth/github:
- *   get:
- *     summary: Initiates GitHub OAuth Authentication
- *     description: |
- *       This endpoint redirects the user to GitHub's OAuth authorization page, where the user can log in and grant the required permissions.
- *     tags:
- *       - Authentication
- *     responses:
- *       302:
- *         description: Redirect to GitHub OAuth authorization page.
- *         headers:
- *           Location:
- *             description: The URL to which the user is redirected for GitHub OAuth login.
- *             schema:
- *               type: string
- *               example: "https://github.com/login/oauth/authorize?client_id=your_client_id&scope=user:email"
- *       400:
- *         description: Bad Request, typically if the GitHub client ID is missing or invalid.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "GitHub client ID is missing or invalid"
- */
-router.get(
-	"/github",
-	authMiddleware({ blockIfAuthenticated: true }),
-	gitHubController
-);
+router.get("/login", authMiddleware(), loginController);
 
-/**
- * @swagger
- * /auth/github/callback:
- *   get:
- *     summary: GitHub OAuth Callback
- *     description: |
- *       This endpoint handles the OAuth callback from GitHub after a user has authenticated. It retrieves the access token and user information from GitHub and establishes the user session.
- *     tags:
- *       - Authentication
- *     parameters:
- *       - in: query
- *         name: code
- *         required: true
- *         description: The authorization code received from GitHub after user authentication.
- *       - in: query
- *         name: error
- *         required: false
- *         description: The error code, if an error occurred during the GitHub OAuth process.
- *     responses:
- *       200:
- *         description: Successfully authenticated with GitHub. A session is created, and the user is redirected to the dashboard.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "success"
- *                 message:
- *                   type: string
- *                   example: "GitHub authentication successful"
- *       400:
- *         description: Bad Request, typically caused by an error in the authentication process or invalid user data.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Failed to retrieve access token"
- *       401:
- *         description: Unauthorized. Occurs when the token is invalid or the user is not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Invalid token or user not found"
- *       500:
- *         description: Internal Server Error, an unexpected error occurred during the authentication process.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "An unexpected error occurred"
- *     security:
- *       - OAuth2: [read, write]
- */
-router.get(
-	"/github/callback",
-	authMiddleware({ blockIfAuthenticated: true }),
-	gitHubCallbackController
-);
+router.get("/logout", authMiddleware({ requireAuth: true }), logoutController);
 
 export default router;

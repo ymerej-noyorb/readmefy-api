@@ -1,9 +1,9 @@
 import express from "express";
-import { userController } from "../controllers/user.controller.js";
+import { gitHubController } from "../controllers/provider.controller.js";
 import { authMiddleware } from "../middlewares/token.middleware.js";
 
 const router = express.Router();
 
-router.get("/me", authMiddleware({ requireAuth: true }), userController);
+router.get("/github", authMiddleware(), gitHubController);
 
 export default router;

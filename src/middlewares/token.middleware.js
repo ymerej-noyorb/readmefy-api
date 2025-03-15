@@ -11,13 +11,17 @@ export const authMiddleware = ({
 	blockIfAuthenticated = false,
 } = {}) => {
 	return (req, res, next) => {
+		logger.debug("Auth middleware started...");
+
 		const token = getCookieAccessToken(req);
+		logger.debug(`Token found: ${token ? "Yes" : "No"}`);
 
 		if (blockIfAuthenticated && token) {
 			logger.warn("User already authenticated, access denied.");
 			return res.status(403).json({
 				success: false,
 				message: "You are already authenticated.",
+				data: {},
 			});
 		}
 
@@ -27,6 +31,7 @@ export const authMiddleware = ({
 				return res.status(401).json({
 					success: false,
 					message: "No token provided",
+					data: {},
 				});
 			}
 
@@ -35,8 +40,11 @@ export const authMiddleware = ({
 				const decoded = verifyJwtToken(token);
 				logger.debug("Token verified successfully:", decoded);
 				req.user = decoded;
+				logger.debug("Calling next() after successful verification");
 				return next();
 			} catch (err) {
+				logger.error("Error verifying JWT token:", err);
+
 				if (err.name === "TokenExpiredError") {
 					logger.warn("Token expired. Attempting to refresh...");
 
@@ -52,6 +60,7 @@ export const authMiddleware = ({
 						setCookieAccessToken(res, newToken);
 						logger.info("New JWT token generated and set in cookie");
 						req.user = decoded;
+						logger.debug("Calling next() after token refresh");
 						return next();
 					} catch (err) {
 						logger.error("Failed to refresh expired token:", err);
@@ -59,6 +68,7 @@ export const authMiddleware = ({
 						return res.status(401).json({
 							success: false,
 							message: "Invalid token",
+							data: {},
 						});
 					}
 				} else {
@@ -67,11 +77,14 @@ export const authMiddleware = ({
 					return res.status(401).json({
 						success: false,
 						message: "Invalid token",
+						data: {},
 					});
 				}
 			}
 		}
 
+		logger.debug("No authentication required, calling next()");
 		next();
+		logger.debug("Auth middleware ended.");
 	};
 };

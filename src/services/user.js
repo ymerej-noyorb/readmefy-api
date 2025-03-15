@@ -22,15 +22,15 @@ export const getUsers = async (page = 1) => {
 	}
 };
 
-export const getUserByReadmefyId = async (readmefy_id) => {
+export const getUserByUserId = async (id) => {
 	try {
 		const rows = await query(
-			`select provider_username, provider_avatar from users where readmefy_id = ?`,
-			[readmefy_id]
+			`select provider_username, provider_avatar from users where id = ?`,
+			[id]
 		);
 		return firstOrNull(rows);
 	} catch (err) {
-		logger.error(`Error fetching user by readmefy_id (${readmefy_id}):`, err);
+		logger.error(`Error fetching user by id (${id}):`, err);
 		throw err;
 	}
 };
@@ -38,7 +38,7 @@ export const getUserByReadmefyId = async (readmefy_id) => {
 export const getUserByProviderId = async (provider_name, provider_id) => {
 	try {
 		const rows = await query(
-			`select readmefy_id, provider_id, provider_data, provider_username, provider_email, provider_avatar from users where provider_name = ? and provider_id = ?`,
+			`select id, provider_id, provider_data, provider_username, provider_email, provider_avatar from users where provider_name = ? and provider_id = ?`,
 			[provider_name, provider_id]
 		);
 		return firstOrNull(rows);
@@ -64,7 +64,7 @@ export const insertUser = async (user) => {
 				user.provider_avatar,
 			]
 		);
-		return { readmefy_id: result.insertId };
+		return { id: result.insertId };
 	} catch (err) {
 		logger.error("Error inserting new user:", err);
 		throw err;

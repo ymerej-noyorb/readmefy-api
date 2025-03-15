@@ -9,13 +9,7 @@ import { setCookieAccessToken } from "../utils/cookies.js";
 import { app } from "../utils/environment.js";
 import { setJwtToken } from "../utils/jwt.js";
 
-export const gitHubController = (req, res) => {
-	const redirectURI = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=user:email`;
-	logger.debug("Redirecting to GitHub OAuth:", redirectURI);
-	res.redirect(redirectURI);
-};
-
-export const gitHubCallbackController = async (req, res) => {
+export const gitHubController = async (req, res) => {
 	const { code, error } = req.query;
 	logger.debug("GitHub callback received:", { code, error });
 
@@ -86,7 +80,7 @@ export const gitHubCallbackController = async (req, res) => {
 			};
 			const insertedUser = await insertUser(newUser);
 			logger.debug("New user inserted:", insertedUser);
-			databaseUser = { readmefy_id: insertedUser.readmefy_id, ...newUser };
+			databaseUser = { id: insertedUser.id, ...newUser };
 		} else {
 			const updates = {};
 			let needsUpdate = false;
@@ -113,19 +107,19 @@ export const gitHubCallbackController = async (req, res) => {
 					"User data has changed, updating specific fields...",
 					updates
 				);
-				await updateUser(databaseUser.readmefy_id, updates);
+				await updateUser(databaseUser.id, updates);
 			} else {
 				logger.debug("No changes detected in user data.");
 			}
 		}
 
 		logger.debug("Generating JWT with data:", {
-			readmefy_id: databaseUser.readmefy_id,
+			readmefy_id: databaseUser.id,
 			provider_id: databaseUser.provider_id,
 		});
 
 		const readmefyToken = setJwtToken({
-			readmefy_id: databaseUser.readmefy_id,
+			readmefy_id: databaseUser.id,
 			provider_id: databaseUser.provider_id,
 		});
 		logger.debug("JWT Token generated:", readmefyToken);

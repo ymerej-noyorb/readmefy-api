@@ -1,5 +1,5 @@
 import { logger } from "../config/winston.js";
-import { getUserByReadmefyId } from "../services/user.js";
+import { getUserByUserId } from "../services/user.js";
 import { getCookieAccessToken } from "../utils/cookies.js";
 import { verifyJwtToken } from "../utils/jwt.js";
 
@@ -19,7 +19,7 @@ export const userController = async (req, res) => {
 		const decoded = verifyJwtToken(token);
 		logger.debug("Decoded JWT:", decoded);
 
-		const user = await getUserByReadmefyId(decoded.readmefy_id);
+		const user = await getUserByUserId(decoded.readmefy_id);
 		logger.debug("User data retrieved:", user);
 
 		if (!user) {

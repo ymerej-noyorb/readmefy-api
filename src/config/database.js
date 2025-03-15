@@ -30,9 +30,9 @@ export const createTables = async () => {
 
 		const createUsersTableQuery = `
 			CREATE TABLE IF NOT EXISTS users (
-				readmefy_id INT AUTO_INCREMENT PRIMARY KEY,
-				readmefy_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				readmefy_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+				id INT AUTO_INCREMENT PRIMARY KEY,
+				created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 				provider_name VARCHAR(255) NOT NULL,
 				provider_data JSON NOT NULL,
 				provider_id VARCHAR(255) NOT NULL UNIQUE,
