@@ -4,6 +4,7 @@ import { authMiddleware } from "../middlewares/token.middleware.js";
 
 const router = express.Router();
 
+//TODO: Add Swagger comments
 router.get("/github", authMiddleware(), gitHubController);
 
 export default router;
