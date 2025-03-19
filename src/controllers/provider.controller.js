@@ -16,7 +16,7 @@ export const gitHubController = async (req, res) => {
 	if (error) {
 		logger.error("GitHub authentication error:", { error });
 		return res.redirect(
-			`${app.url}/login?provider=github&error=github_auth_failed&message=GitHub authentication failed`
+			`${app.url}/login/callback?provider=github&error=github_auth_failed&message=GitHub authentication failed`
 		);
 	}
 
@@ -44,7 +44,7 @@ export const gitHubController = async (req, res) => {
 		if (tokenData.error) {
 			logger.error("Invalid GitHub token:", tokenData.error);
 			return res.redirect(
-				`${app.url}/login?provider=github&error=invalid_token&message=Invalid GitHub access token`
+				`${app.url}/login/callback?provider=github&error=invalid_token&message=Invalid GitHub access token`
 			);
 		}
 
@@ -61,7 +61,7 @@ export const gitHubController = async (req, res) => {
 		if (!user.id) {
 			logger.error("GitHub user not found");
 			return res.redirect(
-				`${app.url}/login?provider=github&error=user_not_found&message=GitHub user not found`
+				`${app.url}/login/callback?provider=github&error=user_not_found&message=GitHub user not found`
 			);
 		}
 
@@ -125,12 +125,12 @@ export const gitHubController = async (req, res) => {
 		logger.debug("JWT Token generated:", readmefyToken);
 
 		setCookieAccessToken(res, readmefyToken);
-		logger.debug("Cookie set, redirecting to dashboard");
-		return res.redirect(`${app.url}/dashboard`);
+		logger.debug("Cookie set, redirecting to callback");
+		return res.redirect(`${app.url}/login/callback`);
 	} catch (err) {
 		logger.error("Server error during GitHub authentication:", err);
 		return res.redirect(
-			`${app.url}/login?provider=github&error=server_error&message=An error occurred during GitHub authentication`
+			`${app.url}/login/callback?provider=github&error=server_error&message=An error occurred during GitHub authentication`
 		);
 	}
 };
