@@ -1,0 +1,28 @@
+tags:
+  - name: Provider
+    description: External OAuth provider integrations
+
+paths:
+  /api/provider/github:
+    get:
+      summary: GitHub OAuth callback handler
+      description: Handles GitHub OAuth authentication and user creation/updating.
+      tags: [Provider]
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+          required: true
+          description: GitHub OAuth authorization code
+        - in: query
+          name: error
+          schema:
+            type: string
+          required: false
+          description: Error message if authentication failed
+      responses:
+        302:
+          description: Redirect to login callback with authentication result
+        500:
+          description: Internal server error

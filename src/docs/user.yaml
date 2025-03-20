@@ -1,0 +1,49 @@
+tags:
+  - name: User
+    description: User-related operations
+
+paths:
+  /api/user/me:
+    get:
+      summary: Retrieve the authenticated user's information
+      description: Returns the details of the currently authenticated user.
+      tags: [User]
+      security:
+        - CookieAuth: []
+      responses:
+        200:
+          description: User successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User successfully retrieved"
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User not found"
+                  data:
+                    type: object
+                    example: {}
+        500:
+          description: Internal server error

@@ -1,6 +1,6 @@
-import lodash from "lodash";
 import { logger } from "../config/winston.js";
 import {
+	compareUser,
 	getUserByProviderId,
 	insertUser,
 	updateUser,
@@ -22,7 +22,7 @@ export const gitHubController = async (req, res) => {
 
 	try {
 		logger.debug("Requesting GitHub access token...");
-		const tokenResponse = await fetch(
+		const githubTokenResponse = await fetch(
 			"https://github.com/login/oauth/access_token",
 			{
 				method: "POST",
@@ -38,71 +38,53 @@ export const gitHubController = async (req, res) => {
 			}
 		);
 
-		const tokenData = await tokenResponse.json();
-		logger.debug("GitHub token response:", tokenData);
+		const providerTokenData = await githubTokenResponse.json();
+		logger.debug("GitHub token response:", providerTokenData);
 
-		if (tokenData.error) {
-			logger.error("Invalid GitHub token:", tokenData.error);
+		if (providerTokenData.error) {
+			logger.error("Invalid GitHub token:", providerTokenData.error);
 			return res.redirect(
 				`${app.url}/login/callback?provider=github&error=invalid_token&message=Invalid GitHub access token`
 			);
 		}
 
-		const githubToken = tokenData.access_token;
+		const providerToken = providerTokenData.access_token;
 		logger.debug("GitHub access token received");
 
 		const userResponse = await fetch("https://api.github.com/user", {
-			headers: { Authorization: `Bearer ${githubToken}` },
+			headers: { Authorization: `Bearer ${providerToken}` },
 		});
 
-		const user = await userResponse.json();
-		logger.debug("GitHub user data:", user);
+		const providerUser = await userResponse.json();
+		logger.debug("GitHub user data:", providerUser);
 
-		if (!user.id) {
+		if (!providerUser.id) {
 			logger.error("GitHub user not found");
 			return res.redirect(
 				`${app.url}/login/callback?provider=github&error=user_not_found&message=GitHub user not found`
 			);
 		}
 
-		let databaseUser = await getUserByProviderId("github", user.id);
+		let databaseUser = await getUserByProviderId("github", providerUser.id);
 		logger.debug("Database user lookup:", databaseUser);
 
 		if (!databaseUser) {
 			logger.warn("User not found in DB, inserting...");
 			const newUser = {
 				provider_name: "github",
-				provider_data: JSON.stringify(user),
-				provider_id: user.id,
-				provider_username: user.login,
-				provider_email: user.email,
-				provider_avatar: user.avatar_url,
+				provider_data: JSON.stringify(providerUser),
+				provider_id: providerUser.id,
+				provider_username: providerUser.login,
+				provider_email: providerUser.email,
+				provider_avatar: providerUser.avatar_url,
 			};
 			const insertedUser = await insertUser(newUser);
 			logger.debug("New user inserted:", insertedUser);
 			databaseUser = { id: insertedUser.id, ...newUser };
 		} else {
-			const updates = {};
-			let needsUpdate = false;
+			const updates = compareUser(databaseUser, providerUser, "github");
 
-			if (!lodash.isEqual(databaseUser.provider_data, user)) {
-				updates.provider_data = JSON.stringify(user);
-				needsUpdate = true;
-			}
-			if (databaseUser.provider_username !== user.login) {
-				updates.provider_username = user.login;
-				needsUpdate = true;
-			}
-			if (databaseUser.provider_email !== user.email) {
-				updates.provider_email = user.email;
-				needsUpdate = true;
-			}
-			if (databaseUser.provider_avatar !== user.avatar_url) {
-				updates.provider_avatar = user.avatar_url;
-				needsUpdate = true;
-			}
-
-			if (needsUpdate) {
+			if (Object.keys(updates).length > 0) {
 				logger.debug(
 					"User data has changed, updating specific fields...",
 					updates

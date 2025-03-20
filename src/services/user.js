@@ -1,3 +1,4 @@
+import lodash from "lodash";
 import { logger } from "../config/winston.js";
 import { query } from "./database.js";
 import { emptyOrRows, firstOrNull, getOffset } from "../utils/helper.js";
@@ -88,4 +89,30 @@ export const updateUser = async (user) => {
 		logger.error("Error updating user:", err);
 		throw err;
 	}
+};
+
+export const compareUser = async (databaseUser, providerUser, providerName) => {
+	const updates = {};
+
+	switch (providerName) {
+		case "github":
+			if (!lodash.isEqual(databaseUser.provider_data, providerUser)) {
+				updates.provider_data = JSON.stringify(providerUser);
+			}
+			if (databaseUser.provider_username !== providerUser.login) {
+				updates.provider_username = providerUser.login;
+			}
+			if (databaseUser.provider_email !== user.email) {
+				updates.provider_email = providerUser.email;
+			}
+			if (databaseUser.provider_avatar !== providerUser.avatar_url) {
+				updates.provider_avatar = providerUser.avatar_url;
+			}
+			break;
+
+		default:
+			break;
+	}
+
+	return updates;
 };

@@ -7,15 +7,6 @@ export const userController = async (req, res) => {
 	const token = getCookieAccessToken(req);
 
 	try {
-		if (!token) {
-			logger.warn("Token not found in the request.");
-			return res.status(401).json({
-				success: false,
-				message: "Token is missing or invalid",
-				data: {},
-			});
-		}
-
 		const decoded = verifyJwtToken(token);
 		logger.debug("Decoded JWT:", decoded);
 

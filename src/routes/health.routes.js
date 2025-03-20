@@ -5,7 +5,6 @@ import { isProduction } from "../utils/environment.js";
 
 const router = express.Router();
 
-//TODO: Add Swagger comments
 router.get(
 	"/",
 	authMiddleware({ requireAuth: isProduction ? true : false }),

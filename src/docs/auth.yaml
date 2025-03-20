@@ -1,0 +1,49 @@
+tags:
+  - name: Auth
+    description: Authentication & Authorization
+
+paths:
+  /api/auth/login:
+    get:
+      summary: Redirect to OAuth provider login
+      description: Initiates authentication with a specified OAuth provider.
+      tags: [Auth]
+      parameters:
+        - in: query
+          name: provider
+          schema:
+            type: string
+          required: true
+          description: The OAuth provider (github, gitlab, discord, google)
+      responses:
+        302:
+          description: Redirect to the provider's OAuth login page
+        400:
+          description: Bad request - Provider is missing or unsupported
+
+  /api/auth/logout:
+    get:
+      summary: Logout the user
+      description: Clears the authentication token and logs the user out.
+      tags: [Auth]
+      security:
+        - CookieAuth: []
+      responses:
+        200:
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Logout successful"
+                  data:
+                    type: object
+                    example: {}
+        500:
+          description: Internal server error during logout

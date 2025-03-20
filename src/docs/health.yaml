@@ -1,0 +1,80 @@
+paths:
+  /api/health:
+    get:
+      summary: Perform a health check on the server
+      description: Returns server status, system information, and database health.
+      security:
+        - CookieAuth: []
+      responses:
+        200:
+          description: Server is running and healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Server is running and healthy"
+                  data:
+                    type: object
+                    properties:
+                      meta:
+                        type: object
+                        properties:
+                          version:
+                            type: string
+                            example: "1.0.0"
+                          environment:
+                            type: string
+                            example: "production"
+                          timestamp:
+                            type: string
+                            format: date-time
+                      system:
+                        type: object
+                        properties:
+                          memory:
+                            type: object
+                            properties:
+                              total:
+                                type: integer
+                              free:
+                                type: integer
+                              usage:
+                                type: integer
+                          cpu:
+                            type: object
+                            properties:
+                              loadAverage:
+                                type: array
+                                items:
+                                  type: number
+                      database:
+                        type: object
+                        properties:
+                          status:
+                            type: string
+                            example: "healthy"
+                          responseTime:
+                            type: integer
+                            example: 15
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Internal server error"
+                  data:
+                    type: object
+                    example: {}

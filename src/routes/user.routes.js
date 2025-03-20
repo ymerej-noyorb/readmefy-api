@@ -4,7 +4,6 @@ import { authMiddleware } from "../middlewares/token.middleware.js";
 
 const router = express.Router();
 
-//TODO: Add Swagger comments
 router.get("/me", authMiddleware({ requireAuth: true }), userController);
 
 export default router;
